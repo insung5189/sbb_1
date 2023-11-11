@@ -182,4 +182,5 @@ replay_pid*
 
 ### application-secret
 /src/main/resources/application-secret.yml
+/src/main/resources/application-secret.*
 /src/main/generated/*
