@@ -1,5 +1,6 @@
 <!doctype html>
-<html lang="ko" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="ko" xmlns:th="http://www.w3.org/1999/xhtml" layout:decorate="~{layout}"
+      xmlns:layout="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
@@ -8,7 +9,7 @@
     <link rel="stylesheet" type="text/css" th:href="@{/bootstrap.min.css}">
     <title>question_detail</title>
 </head>
-<body>
+<body layout:fragment="content">
 <div class="container my-3">
     <!-- 질문 -->
     <h2 class="border-bottom py-2" th:text="${question.subject}"></h2>
