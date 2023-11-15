@@ -1,6 +1,6 @@
 <!doctype html>
-<html lang="ko" xmlns:th="http://www.w3.org/1999/xhtml" layout:decorate="~{layout}"
-      xmlns:layout="http://www.w3.org/1999/xhtml">
+<html lang="ko" layout:decorate="~{layout}" xmlns:layout="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
@@ -22,7 +22,11 @@
         <tr th:each="question, loop : ${paging}">
             <td th:text="${paging.getTotalElements - (paging.number * paging.size) - loop.index}"></td>
             <td>
-            <a th:href="@{|/question/detail/${question.id}|}" th:text="${question.subject}"></a>
+                <a th:href="@{|/question/detail/${question.id}|}" th:text="${question.subject}"></a>
+                <span class="text-danger small ms-2"
+                      th:if="${#lists.size(question.answerList) > 0}"
+                      th:text="${#lists.size(question.answerList)}">
+                </span>
             </td>
             <td th:text="${#temporals.format(question.createDate, 'yyyy-MM-dd HH:mm')}"></td>
         </tr>
@@ -37,11 +41,11 @@
                     <span>이전</span>
                 </a>
             </li>
-            <li th:each="page: ${#numbers.sequence(0, paging.totalPages-1)}"
-                th:if="${page >= paging.number-5 and page <= paging.number+5}"
+            <li class="page-item"
                 th:classappend="${page == paging.number} ? 'active'"
-                class="page-item">
-                <a th:text="${page}" class="page-link" th:href="@{|?page=${page}|}"></a>
+                th:each="page: ${#numbers.sequence(0, paging.totalPages-1)}"
+                th:if="${page >= paging.number-5 and page <= paging.number+5}">
+                <a class="page-link" th:href="@{|?page=${page}|}" th:text="${page}"></a>
             </li>
             <li class="page-item" th:classappend="${!paging.hasNext} ? 'disabled'">
                 <a class="page-link" th:href="@{|?page=${paging.number+1}|}">
@@ -51,7 +55,7 @@
         </ul>
     </div>
     <!-- 페이징처리 끝 -->
-    <a th:href="@{/question/create}" class="btn btn-primary">질문 등록하기</a>
+    <a class="btn btn-primary" th:href="@{/question/create}">질문 등록하기</a>
 </div>
 </body>
 </html>
