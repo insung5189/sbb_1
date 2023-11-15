@@ -1,26 +1,22 @@
 package com.ll.sbb_1.answer;
 
+import com.ll.sbb_1.base.BaseEntity;
 import com.ll.sbb_1.comment.Comment;
 import com.ll.sbb_1.question.Question;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@SuperBuilder
-@Getter
-@Setter
+@Data
+@EqualsAndHashCode(callSuper = true)
 @Entity
-public class Answer {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
-    private LocalDateTime createDate;
-    private LocalDateTime modifyDate;
+@AllArgsConstructor
+@NoArgsConstructor
+@SuperBuilder(toBuilder = true)
+public class Answer extends BaseEntity {
 
     @Column(columnDefinition = "TEXT")
     private String content;

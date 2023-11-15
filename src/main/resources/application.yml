@@ -23,7 +23,7 @@ spring:
     properties:
       hibernate:
         show_sql: true
-        format_sql: false
+        format_sql: true
         use_sql_comments: false
   servlet:
     multipart:
