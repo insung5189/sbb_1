@@ -2,6 +2,7 @@ package com.ll.sbb_1.comment;
 
 import com.ll.sbb_1.answer.Answer;
 import com.ll.sbb_1.base.BaseEntity;
+import com.ll.sbb_1.user.SiteUser;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -23,4 +24,6 @@ public class Comment extends BaseEntity {
     @ManyToOne
     private Answer answer;
 
+    @ManyToMany
+    Set<SiteUser> voter;
 }

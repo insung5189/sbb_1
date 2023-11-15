@@ -10,6 +10,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -30,4 +31,7 @@ public class Answer extends BaseEntity {
 
     @ManyToOne
     private SiteUser author;
+
+    @ManyToMany
+    Set<SiteUser> voter;
 }
