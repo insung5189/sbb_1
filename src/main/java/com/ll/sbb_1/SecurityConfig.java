@@ -32,8 +32,7 @@ public class SecurityConfig {
                 .requestMatchers("/**").permitAll() // 나머지 URL은 모두 접근 허용
                 .and()
                 .csrf().ignoringRequestMatchers(
-                        new AntPathRequestMatcher("/h2-console/**"),
-                        new AntPathRequestMatcher("/chat/send")) // /chat/ask에 대해 CSRF 보호 기능 비활성화
+                        new AntPathRequestMatcher("/h2-console/**"))
                 .and()
                 .headers()
                 .addHeaderWriter(new XFrameOptionsHeaderWriter(
