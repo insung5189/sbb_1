@@ -6,6 +6,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -19,6 +20,7 @@ public class UserService {
         SiteUser user = SiteUser.builder()
                 .username(username)
                 .email(email)
+                .createDate(LocalDateTime.now())
                 .password(passwordEncoder.encode(password))
                 .build();
         this.userRepository.save(user);
