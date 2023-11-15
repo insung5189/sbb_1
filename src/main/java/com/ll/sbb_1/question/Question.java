@@ -2,6 +2,7 @@ package com.ll.sbb_1.question;
 
 import com.ll.sbb_1.answer.Answer;
 import com.ll.sbb_1.base.BaseEntity;
+import com.ll.sbb_1.user.SiteUser;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -25,5 +26,8 @@ public class Question extends BaseEntity {
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.REMOVE) // question이 지워지면 해당 answer도 같이 지워지도록 함.
     private List<Answer> answerList;
+
+    @ManyToOne
+    private SiteUser author;
 
 }

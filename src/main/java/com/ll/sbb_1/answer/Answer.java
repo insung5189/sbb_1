@@ -3,6 +3,7 @@ package com.ll.sbb_1.answer;
 import com.ll.sbb_1.base.BaseEntity;
 import com.ll.sbb_1.comment.Comment;
 import com.ll.sbb_1.question.Question;
+import com.ll.sbb_1.user.SiteUser;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -26,4 +27,7 @@ public class Answer extends BaseEntity {
 
     @ManyToOne
     private Question question;
+
+    @ManyToOne
+    private SiteUser author;
 }
