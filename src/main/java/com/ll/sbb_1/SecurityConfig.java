@@ -42,6 +42,7 @@ public class SecurityConfig {
                         formLogin -> formLogin
                                 .loginPage("/user/login") // GET
                                 .loginProcessingUrl("/user/login") // POST
+                                .defaultSuccessUrl("/")
                 )
 //                .oauth2Login(
 //                        oauth2Login -> oauth2Login
@@ -51,10 +52,10 @@ public class SecurityConfig {
 //                                                .userService(oAuth2UserService)
 //                                )
 //                )
-                .logout()
-                .logoutRequestMatcher(new AntPathRequestMatcher("/user/logout"))
-                .logoutSuccessUrl("/")
-                .invalidateHttpSession(true)
+                .logout((logout) -> logout
+                        .logoutRequestMatcher(new AntPathRequestMatcher("/user/logout"))
+                        .logoutSuccessUrl("/")
+                        .invalidateHttpSession(true))
         ;
         return http.build();
     }
