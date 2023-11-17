@@ -8,7 +8,28 @@
     <title>login</title>
 </head>
 <body layout:fragment="content">
+<div class="my-3 border-bottom">
+    <div>
+        <h4>로그인</h4>
+    </div>
+</div>
 <div class="container my-3">
+    <!-- Add Social Login Buttons -->
+    <div class="mb-3">
+        <button class="btn" type="button" onclick="location.href='/oauth2/authorization/kakao'">
+            <img class="" th:src="@{/image/login_kakao.png}" alt="" style="width : 30px; height : 30px;">
+            카카오로 로그인
+        </button>
+        <button class="btn" type="button" onclick="location.href='/oauth2/authorization/google'">
+            <img class="" th:src="@{/image/login_google.png}" alt="" style="width : 30px; height : 30px;">
+            구글로 로그인
+        </button>
+        <button class="btn" type="button" onclick="location.href='/oauth2/authorization/naver'">
+            <img class="" th:src="@{/image/login_naver.png}" alt="" style="width : 30px; height : 30px;">
+            네이버로 로그인
+        </button>
+    </div>
+
   <form th:action="@{/user/login}" method="post">
     <div th:if="${param.error}">
       <div class="alert alert-danger">

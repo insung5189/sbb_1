@@ -21,8 +21,8 @@ import org.springframework.web.client.RestTemplate;
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
-//    @Autowired
-//    private OAuth2UserService oAuth2UserService;
+    @Autowired
+    private OAuth2UserService oAuth2UserService;
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -44,14 +44,14 @@ public class SecurityConfig {
                                 .loginProcessingUrl("/user/login") // POST
                                 .defaultSuccessUrl("/")
                 )
-//                .oauth2Login(
-//                        oauth2Login -> oauth2Login
-//                                .loginPage("/user/login")
-//                                .userInfoEndpoint(
-//                                        userInfoEndpoint -> userInfoEndpoint
-//                                                .userService(oAuth2UserService)
-//                                )
-//                )
+                .oauth2Login(
+                        oauth2Login -> oauth2Login
+                                .loginPage("/user/login")
+                                .userInfoEndpoint(
+                                        userInfoEndpoint -> userInfoEndpoint
+                                                .userService(oAuth2UserService)
+                                )
+                )
                 .logout((logout) -> logout
                         .logoutRequestMatcher(new AntPathRequestMatcher("/user/logout"))
                         .logoutSuccessUrl("/")
