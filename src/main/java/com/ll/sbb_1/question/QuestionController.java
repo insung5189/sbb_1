@@ -1,12 +1,15 @@
 package com.ll.sbb_1.question;
 
+import com.ll.sbb_1.answer.Answer;
 import com.ll.sbb_1.answer.AnswerForm;
+import com.ll.sbb_1.answer.AnswerService;
 import com.ll.sbb_1.user.SiteUser;
 import com.ll.sbb_1.user.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,6 +26,7 @@ import java.util.List;
 public class QuestionController {
 
     private final QuestionService questionService;
+    private final AnswerService answerService;
     private final UserService userService;
 
     @GetMapping("/list")
@@ -35,11 +39,23 @@ public class QuestionController {
     }
 
     @GetMapping(value = "/detail/{id}")
-    public String detail(Model model, @PathVariable("id") Integer id, AnswerForm answerForm) {
+    public String detail(@RequestParam(value = "page", defaultValue = "0") int page,
+                         @PathVariable("id") Integer id,
+                         AnswerForm answerForm,
+                         Model model) {
         Question question = this.questionService.getQuestion(id);
+        Page<Answer> aspaging = this.answerService.getListByQuestionId(page, id);
+        model.addAttribute("aspaging", aspaging);
         model.addAttribute("question", question);
         return "question_detail";
     }
+    @GetMapping(value = "/answer/getList")
+    public ResponseEntity<Page<Answer>> getAnswerList(@RequestParam(value = "page", defaultValue = "0") int page,
+                                                      @RequestParam("questionId") Integer questionId) {
+        Page<Answer> aspaging = this.answerService.getListByQuestionId(page, questionId);
+        return ResponseEntity.ok().body(aspaging);
+    }
+
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/create")
     public String questionCreate(QuestionForm questionForm) {

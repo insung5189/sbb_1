@@ -49,7 +49,7 @@
     <h5 class="border-bottom my-3 py-2"
         th:text="|${#lists.size(question.answerList)}개의 답변이 있습니다.|"></h5>
     <!-- 답변 반복 시작 -->
-    <div class="card my-3" th:each="answer : ${question.answerList}">
+    <div class="card my-3 answer answer-container" th:each="answer : ${aspaging}">
         <a th:id="|answer_${answer.id}|"></a>
         <div class="card-body">
             <div class="card-text" th:utext="${@commonUtil.markdown(answer.content)}"></div>
@@ -81,8 +81,26 @@
                    th:text="삭제"></a>
             </div>
         </div>
+        <div id="question" data-question-id="@{|${question.id}|}"></div>
     </div>
     <!-- 답변 반복 끝  -->
+
+    <!-- 답변의 페이지네이션 -->
+    <div th:if="${aspaging.totalPages > 1}">
+        <ul class="pagination justify-content-center">
+            <li th:class="${aspaging.number == 0} ? 'page-item disabled' : 'page-item'">
+                <a th:href="@{|/question/detail/${question.id}?page=0|}" class="page-link">처음</a>
+            </li>
+            <li th:each="i : ${#numbers.sequence(0, aspaging.totalPages - 1)}"
+                th:class="${aspaging.number == i} ? 'page-item active' : 'page-item'">
+                <a th:href="@{|/question/detail/${question.id}?page=${i}|}" class="page-link"
+                   th:text="${i + 1}"></a>
+            </li>
+            <li th:class="${aspaging.number == aspaging.totalPages - 1} ? 'page-item disabled' : 'page-item'">
+                <a th:href="@{|/question/detail/${question.id}?page=${aspaging.totalPages - 1}|}" class="page-link">마지막</a>
+            </li>
+        </ul>
+    </div>
     <!-- 답변 작성 -->
     <form th:action="@{|/answer/create/${question.id}|}" th:object="${answerForm}" method="post" class="my-3">
         <div th:replace="~{form_errors :: formErrorsFragment}"></div>
@@ -92,6 +110,7 @@
     </form>
 </div>
 </body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script layout:fragment="script" type='text/javascript'>
 const delete_elements = document.getElementsByClassName("delete");
 Array.from(delete_elements).forEach(function(element) {
@@ -109,5 +128,60 @@ Array.from(recommend_elements).forEach(function(element) {
         };
     });
 });
+
+$(document).ready(function() {
+    function loadAnswers(page) {
+        var questionId = $("#question").data("question-id");
+        $.ajax({
+            type: "GET",
+            url: "/answer/getList",
+            data: { questionId: questionId, page: page },
+            success: function(response) {
+                var totalPages = response.totalPages;
+                var currentPage = response.number;
+                var answerList = response.content;
+
+                var answerHTML = "";
+                answerList.forEach(function(answer) {
+                    answerHTML += "<div class='card'>";
+                    answerHTML += "<p>" + answer.content + "</p>";
+                    // ... 기타 답변 정보 추가
+                    answerHTML += "</div>";
+                });
+
+                $(".answer-container").html(answerHTML);
+
+                // 페이지네이션 업데이트 로직 추가
+                var paginationHTML = generatePagination(totalPages, currentPage);
+                $(".pagination").html(paginationHTML);
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
+    }
+
+    function generatePagination(totalPages, currentPage) {
+        var paginationHTML = "";
+        for (var i = 0; i < totalPages; i++) {
+            if (i === currentPage) {
+                paginationHTML += "<li class='page-item active'>";
+            } else {
+                paginationHTML += "<li class='page-item'>";
+            }
+            paginationHTML += "<a class='page-link' href='?page=" + i + "'>" + (i + 1) + "</a></li>";
+        }
+        return paginationHTML;
+    }
+
+    $(document).on("click", ".pagination a.page-link", function(event) {
+        event.preventDefault();
+        var page = $(this).attr("href").split("page=")[1];
+        loadAnswers(page);
+    });
+
+    loadAnswers(0);
+});
+
 </script>
 </html>
