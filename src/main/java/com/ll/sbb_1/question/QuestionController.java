@@ -3,6 +3,7 @@ package com.ll.sbb_1.question;
 import com.ll.sbb_1.answer.Answer;
 import com.ll.sbb_1.answer.AnswerForm;
 import com.ll.sbb_1.answer.AnswerService;
+import com.ll.sbb_1.comment.CommentForm;
 import com.ll.sbb_1.user.SiteUser;
 import com.ll.sbb_1.user.UserService;
 import jakarta.validation.Valid;
@@ -19,6 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 
 @RequestMapping("/question")
 @RequiredArgsConstructor
@@ -42,6 +44,7 @@ public class QuestionController {
     public String detail(@RequestParam(value = "page", defaultValue = "0") int page,
                          @PathVariable("id") Integer id,
                          AnswerForm answerForm,
+                         CommentForm commentForm,
                          Model model) {
         Question question = this.questionService.getQuestion(id);
         Page<Answer> aspaging = this.answerService.getListByQuestionId(page, id);
@@ -111,12 +114,19 @@ public class QuestionController {
         return "redirect:/";
     }
 
+    @ResponseBody
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/vote/{id}")
-    public String questionVote(Principal principal, @PathVariable("id") Integer id) {
+    public ResponseEntity<?> questionVote(Principal principal, @PathVariable("id") Integer id) {
         Question question = this.questionService.getQuestion(id);
         SiteUser siteUser = this.userService.getUser(principal.getName());
+
+        // 이미 해당 사용자가 이 질문을 추천한 경우, JSON 응답으로 메시지 반환
+        if (question.getVoter().contains(siteUser)) {
+            return ResponseEntity.ok(Map.of("alreadyVoted", true, "updatedCount", question.getVoter().size()));
+        }
         this.questionService.vote(question, siteUser);
-        return String.format("redirect:/question/detail/%s", id);
+
+        return ResponseEntity.ok(Map.of("alreadyVoted", false, "updatedCount", question.getVoter().size()));
     }
 }

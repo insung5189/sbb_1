@@ -7,6 +7,7 @@ import com.ll.sbb_1.user.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
+import java.util.Map;
 
 @RequestMapping("/answer")
 @RequiredArgsConstructor
@@ -74,13 +76,19 @@ public class AnswerController {
         this.answerService.delete(answer);
         return String.format("redirect:/question/detail/%s", answer.getQuestion().getId());
     }
+    @ResponseBody
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/vote/{id}")
-    public String answerVote(Principal principal, @PathVariable("id") Integer id) {
+    public ResponseEntity<Map<String, Object>> answerVote(Principal principal, @PathVariable("id") Integer id) {
         Answer answer = this.answerService.getAnswer(id);
         SiteUser siteUser = this.userService.getUser(principal.getName());
+
+        // 이미 해당 사용자가 이 답변을 추천한 경우, JSON 응답으로 메시지 반환
+        if (answer.getVoter().contains(siteUser)) {
+            return ResponseEntity.ok(Map.of("alreadyVoted", true, "updatedCount", answer.getVoter().size()));
+        }
+
         this.answerService.vote(answer, siteUser);
-        return String.format("redirect:/question/detail/%s#answer_%s",
-                answer.getQuestion().getId(), answer.getId());
+        return ResponseEntity.ok(Map.of("alreadyVoted", false, "updatedCount", answer.getVoter().size()));
     }
 }

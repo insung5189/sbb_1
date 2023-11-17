@@ -24,6 +24,9 @@ public class Comment extends BaseEntity {
     @ManyToOne
     private Answer answer;
 
+    @ManyToOne
+    private SiteUser author;
+
     @ManyToMany
     Set<SiteUser> voter;
 }
